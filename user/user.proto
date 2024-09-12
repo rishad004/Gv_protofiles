@@ -42,8 +42,8 @@ message LoginResponse {
 }
 
 message EditRequest{
-    string username = 1;
-    string password = 2;
+    int32 id = 1;
+    string username = 2;
     string phone = 3;
     string gender = 4;
 }
