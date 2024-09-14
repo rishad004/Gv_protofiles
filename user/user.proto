@@ -36,9 +36,8 @@ message LoginRequest {
 }
 
 message LoginResponse {
-    string id = 1;
-    string token = 2;
-    string message = 3;
+    string token = 1;
+    string message = 2;
 }
 
 message EditRequest{
