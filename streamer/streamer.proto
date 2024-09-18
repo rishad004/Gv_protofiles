@@ -34,6 +34,7 @@ message ChannelResponse {
 message EditRequest {
     string name = 1;
     string description = 2;
+    int32 userid = 3;
 }
 
 message EditResponse {
