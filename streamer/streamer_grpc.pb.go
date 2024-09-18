@@ -19,9 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	StreamerService_Registration_FullMethodName = "/streamer.StreamerService/Registration"
-	StreamerService_ChannelView_FullMethodName  = "/streamer.StreamerService/ChannelView"
-	StreamerService_EditChannel_FullMethodName  = "/streamer.StreamerService/EditChannel"
+	StreamerService_Registration_FullMethodName    = "/streamer.StreamerService/Registration"
+	StreamerService_ChannelView_FullMethodName     = "/streamer.StreamerService/ChannelView"
+	StreamerService_EditChannel_FullMethodName     = "/streamer.StreamerService/EditChannel"
+	StreamerService_SubscriptionSet_FullMethodName = "/streamer.StreamerService/SubscriptionSet"
 )
 
 // StreamerServiceClient is the client API for StreamerService service.
@@ -31,6 +32,7 @@ type StreamerServiceClient interface {
 	Registration(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*RegistrationResponse, error)
 	ChannelView(ctx context.Context, in *Verification, opts ...grpc.CallOption) (*ChannelResponse, error)
 	EditChannel(ctx context.Context, in *EditRequest, opts ...grpc.CallOption) (*EditResponse, error)
+	SubscriptionSet(ctx context.Context, in *SubscriptionRequest, opts ...grpc.CallOption) (*SubscriptionResponse, error)
 }
 
 type streamerServiceClient struct {
@@ -71,6 +73,16 @@ func (c *streamerServiceClient) EditChannel(ctx context.Context, in *EditRequest
 	return out, nil
 }
 
+func (c *streamerServiceClient) SubscriptionSet(ctx context.Context, in *SubscriptionRequest, opts ...grpc.CallOption) (*SubscriptionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SubscriptionResponse)
+	err := c.cc.Invoke(ctx, StreamerService_SubscriptionSet_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StreamerServiceServer is the server API for StreamerService service.
 // All implementations must embed UnimplementedStreamerServiceServer
 // for forward compatibility.
@@ -78,6 +90,7 @@ type StreamerServiceServer interface {
 	Registration(context.Context, *RegistrationRequest) (*RegistrationResponse, error)
 	ChannelView(context.Context, *Verification) (*ChannelResponse, error)
 	EditChannel(context.Context, *EditRequest) (*EditResponse, error)
+	SubscriptionSet(context.Context, *SubscriptionRequest) (*SubscriptionResponse, error)
 	mustEmbedUnimplementedStreamerServiceServer()
 }
 
@@ -96,6 +109,9 @@ func (UnimplementedStreamerServiceServer) ChannelView(context.Context, *Verifica
 }
 func (UnimplementedStreamerServiceServer) EditChannel(context.Context, *EditRequest) (*EditResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditChannel not implemented")
+}
+func (UnimplementedStreamerServiceServer) SubscriptionSet(context.Context, *SubscriptionRequest) (*SubscriptionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubscriptionSet not implemented")
 }
 func (UnimplementedStreamerServiceServer) mustEmbedUnimplementedStreamerServiceServer() {}
 func (UnimplementedStreamerServiceServer) testEmbeddedByValue()                         {}
@@ -172,6 +188,24 @@ func _StreamerService_EditChannel_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StreamerService_SubscriptionSet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubscriptionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StreamerServiceServer).SubscriptionSet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StreamerService_SubscriptionSet_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StreamerServiceServer).SubscriptionSet(ctx, req.(*SubscriptionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // StreamerService_ServiceDesc is the grpc.ServiceDesc for StreamerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -190,6 +224,10 @@ var StreamerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EditChannel",
 			Handler:    _StreamerService_EditChannel_Handler,
+		},
+		{
+			MethodName: "SubscriptionSet",
+			Handler:    _StreamerService_SubscriptionSet_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
