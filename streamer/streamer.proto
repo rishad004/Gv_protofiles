@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package streamer;
+
+option go_package = "github.com/rishad004/project-gv/streamer-service";
+
+service StreamerService {
+    rpc Registration(RegistrationRequest) returns (RegistrationResponse);
+    rpc ChannelView(Verification) returns (ChannelResponse);
+    rpc EditChannel(EditRequest) returns (EditResponse);
+}
+
+message RegistrationRequest {
+    string name = 1;
+    string description = 2;
+    int32 userid = 3;
+}
+
+message RegistrationResponse {
+    string message = 1;
+    string streamkey = 2;
+}
+
+message Verification {
+    int32 userid = 1;
+}
+
+message ChannelResponse {
+    string name = 1;
+    string description = 2;
+    string streamkey = 3;
+}
+
+message EditRequest {
+    string name = 1;
+    string description = 2;
+}
+
+message EditResponse {
+    string message = 1;
+}
