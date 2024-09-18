@@ -22,6 +22,7 @@ const (
 	UserService_SignUp_FullMethodName            = "/user.UserService/SignUp"
 	UserService_EmailVerification_FullMethodName = "/user.UserService/EmailVerification"
 	UserService_Login_FullMethodName             = "/user.UserService/Login"
+	UserService_Profile_FullMethodName           = "/user.UserService/Profile"
 	UserService_ProfileEditing_FullMethodName    = "/user.UserService/ProfileEditing"
 )
 
@@ -32,6 +33,7 @@ type UserServiceClient interface {
 	SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpResponse, error)
 	EmailVerification(ctx context.Context, in *VerificationRequest, opts ...grpc.CallOption) (*VerificationResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
+	Profile(ctx context.Context, in *Verification, opts ...grpc.CallOption) (*ProfileResponse, error)
 	ProfileEditing(ctx context.Context, in *EditRequest, opts ...grpc.CallOption) (*EditResponse, error)
 }
 
@@ -73,6 +75,16 @@ func (c *userServiceClient) Login(ctx context.Context, in *LoginRequest, opts ..
 	return out, nil
 }
 
+func (c *userServiceClient) Profile(ctx context.Context, in *Verification, opts ...grpc.CallOption) (*ProfileResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProfileResponse)
+	err := c.cc.Invoke(ctx, UserService_Profile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userServiceClient) ProfileEditing(ctx context.Context, in *EditRequest, opts ...grpc.CallOption) (*EditResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EditResponse)
@@ -90,6 +102,7 @@ type UserServiceServer interface {
 	SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error)
 	EmailVerification(context.Context, *VerificationRequest) (*VerificationResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
+	Profile(context.Context, *Verification) (*ProfileResponse, error)
 	ProfileEditing(context.Context, *EditRequest) (*EditResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
@@ -109,6 +122,9 @@ func (UnimplementedUserServiceServer) EmailVerification(context.Context, *Verifi
 }
 func (UnimplementedUserServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedUserServiceServer) Profile(context.Context, *Verification) (*ProfileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Profile not implemented")
 }
 func (UnimplementedUserServiceServer) ProfileEditing(context.Context, *EditRequest) (*EditResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProfileEditing not implemented")
@@ -188,6 +204,24 @@ func _UserService_Login_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_Profile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Verification)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).Profile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_Profile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).Profile(ctx, req.(*Verification))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_ProfileEditing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EditRequest)
 	if err := dec(in); err != nil {
@@ -224,6 +258,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _UserService_Login_Handler,
+		},
+		{
+			MethodName: "Profile",
+			Handler:    _UserService_Profile_Handler,
 		},
 		{
 			MethodName: "ProfileEditing",

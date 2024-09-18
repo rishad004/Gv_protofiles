@@ -8,6 +8,7 @@ service UserService {
     rpc SignUp(SignUpRequest) returns (SignUpResponse);
     rpc EmailVerification(VerificationRequest) returns (VerificationResponse);
     rpc Login(LoginRequest) returns (LoginResponse);
+    rpc Profile(Verification) returns (ProfileResponse);
     rpc ProfileEditing(EditRequest) returns (EditResponse);
 }
 
@@ -47,6 +48,18 @@ message EditRequest{
     string username = 2;
     string phone = 3;
     string gender = 4;
+}
+
+message Verification{
+    int32 id = 1;
+}
+
+message ProfileResponse{
+    int32 id = 1;
+    string username = 2;
+    string email = 3;
+    string phone = 4;
+    string gender = 5;
 }
 
 message EditResponse{
