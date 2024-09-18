@@ -6,7 +6,7 @@ option go_package = "github.com/rishad004/project-gv/user-service";
 
 service UserService {
     rpc SignUp(SignUpRequest) returns (SignUpResponse);
-    rpc EmailVerification(Empty) returns (VerificationResponse);
+    rpc EmailVerification(VerificationRequest) returns (VerificationResponse);
     rpc Login(LoginRequest) returns (LoginResponse);
     rpc ProfileEditing(EditRequest) returns (EditResponse);
 }
@@ -24,7 +24,9 @@ message SignUpResponse {
     string message = 2;
 }
 
-message Empty{}
+message VerificationRequest{
+    string key = 1;
+}
 
 message VerificationResponse{
     string message = 1;

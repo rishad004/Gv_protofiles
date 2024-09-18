@@ -30,7 +30,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
 	SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpResponse, error)
-	EmailVerification(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*VerificationResponse, error)
+	EmailVerification(ctx context.Context, in *VerificationRequest, opts ...grpc.CallOption) (*VerificationResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	ProfileEditing(ctx context.Context, in *EditRequest, opts ...grpc.CallOption) (*EditResponse, error)
 }
@@ -53,7 +53,7 @@ func (c *userServiceClient) SignUp(ctx context.Context, in *SignUpRequest, opts 
 	return out, nil
 }
 
-func (c *userServiceClient) EmailVerification(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*VerificationResponse, error) {
+func (c *userServiceClient) EmailVerification(ctx context.Context, in *VerificationRequest, opts ...grpc.CallOption) (*VerificationResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(VerificationResponse)
 	err := c.cc.Invoke(ctx, UserService_EmailVerification_FullMethodName, in, out, cOpts...)
@@ -88,7 +88,7 @@ func (c *userServiceClient) ProfileEditing(ctx context.Context, in *EditRequest,
 // for forward compatibility.
 type UserServiceServer interface {
 	SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error)
-	EmailVerification(context.Context, *Empty) (*VerificationResponse, error)
+	EmailVerification(context.Context, *VerificationRequest) (*VerificationResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	ProfileEditing(context.Context, *EditRequest) (*EditResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
@@ -104,7 +104,7 @@ type UnimplementedUserServiceServer struct{}
 func (UnimplementedUserServiceServer) SignUp(context.Context, *SignUpRequest) (*SignUpResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignUp not implemented")
 }
-func (UnimplementedUserServiceServer) EmailVerification(context.Context, *Empty) (*VerificationResponse, error) {
+func (UnimplementedUserServiceServer) EmailVerification(context.Context, *VerificationRequest) (*VerificationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EmailVerification not implemented")
 }
 func (UnimplementedUserServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
@@ -153,7 +153,7 @@ func _UserService_SignUp_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _UserService_EmailVerification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
+	in := new(VerificationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func _UserService_EmailVerification_Handler(srv interface{}, ctx context.Context
 		FullMethod: UserService_EmailVerification_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).EmailVerification(ctx, req.(*Empty))
+		return srv.(UserServiceServer).EmailVerification(ctx, req.(*VerificationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
