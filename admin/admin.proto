@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package admin;
+
+option go_package = "github.com/rishad004/project_gv/admin-server";
+
+service AdminService {
+    rpc Login(LoginRequest) returns (LoginResponse);
+    rpc FetchUsers(Empty) returns (UsersResponse);
+}
+
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    string token = 1;
+    string message = 2;
+}
+
+message Users {
+    int32 id = 1;
+    string username = 2;
+    string email = 3;
+    string phone = 4;
+    string gender = 5;
+    bool verified = 6;
+}
+
+message Streamers {
+    int32 id = 1;
+    string name = 2;
+    string description = 3;
+}
+
+message UsersResponse {
+    repeated Users user = 1;
+    repeated Streamers streamer = 2;
+}
+
+message Empty {}

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package payment;
+
+option go_package = "github.com/rishad004/project-gv/payment-service";
+
+service PaymentService {
+    rpc PaymentInitialize(PaymentInitRequest) returns (PaymentInitResponse);
+    rpc PaymentVerify(PaymentVerifyRequest) returns (PaymentVerifyResponse);
+}
+
+message PaymentInitRequest {
+    int32 amount = 1;
+    string type = 2;
+}
+
+message PaymentInitResponse {
+    string paymentid = 1;
+}
+
+message PaymentVerifyRequest {
+    string signature = 1;
+    string orderid = 2;
+    string paymentid = 3;
+}
+
+message PaymentVerifyResponse {
+    bool status = 1;
+}

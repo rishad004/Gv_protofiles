@@ -10,6 +10,7 @@ service UserService {
     rpc Login(LoginRequest) returns (LoginResponse);
     rpc Profile(Verification) returns (ProfileResponse);
     rpc ProfileEditing(EditRequest) returns (EditResponse);
+    rpc Subscribing(SubscribeRequest) returns (SubscribeResponse);
 }
 
 message SignUpRequest {
@@ -64,4 +65,14 @@ message ProfileResponse{
 
 message EditResponse{
     string message = 1;
+}
+
+message SubscribeRequest {
+    int32 id = 1;
+    int32 amount = 2;
+}
+
+message SubscribeResponse {
+    string paymentid = 1;
+    string message = 2;
 }
