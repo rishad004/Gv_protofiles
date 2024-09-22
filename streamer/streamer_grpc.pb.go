@@ -34,7 +34,7 @@ type StreamerServiceClient interface {
 	ChannelView(ctx context.Context, in *Verification, opts ...grpc.CallOption) (*ChannelResponse, error)
 	EditChannel(ctx context.Context, in *EditRequest, opts ...grpc.CallOption) (*EditResponse, error)
 	SubscriptionSet(ctx context.Context, in *SubscriptionRequest, opts ...grpc.CallOption) (*SubscriptionResponse, error)
-	SubscriptionCheck(ctx context.Context, in *CheckingRequest, opts ...grpc.CallOption) (*CheckingResponse, error)
+	SubscriptionCheck(ctx context.Context, in *Verification, opts ...grpc.CallOption) (*CheckingResponse, error)
 }
 
 type streamerServiceClient struct {
@@ -85,7 +85,7 @@ func (c *streamerServiceClient) SubscriptionSet(ctx context.Context, in *Subscri
 	return out, nil
 }
 
-func (c *streamerServiceClient) SubscriptionCheck(ctx context.Context, in *CheckingRequest, opts ...grpc.CallOption) (*CheckingResponse, error) {
+func (c *streamerServiceClient) SubscriptionCheck(ctx context.Context, in *Verification, opts ...grpc.CallOption) (*CheckingResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CheckingResponse)
 	err := c.cc.Invoke(ctx, StreamerService_SubscriptionCheck_FullMethodName, in, out, cOpts...)
@@ -103,7 +103,7 @@ type StreamerServiceServer interface {
 	ChannelView(context.Context, *Verification) (*ChannelResponse, error)
 	EditChannel(context.Context, *EditRequest) (*EditResponse, error)
 	SubscriptionSet(context.Context, *SubscriptionRequest) (*SubscriptionResponse, error)
-	SubscriptionCheck(context.Context, *CheckingRequest) (*CheckingResponse, error)
+	SubscriptionCheck(context.Context, *Verification) (*CheckingResponse, error)
 	mustEmbedUnimplementedStreamerServiceServer()
 }
 
@@ -126,7 +126,7 @@ func (UnimplementedStreamerServiceServer) EditChannel(context.Context, *EditRequ
 func (UnimplementedStreamerServiceServer) SubscriptionSet(context.Context, *SubscriptionRequest) (*SubscriptionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubscriptionSet not implemented")
 }
-func (UnimplementedStreamerServiceServer) SubscriptionCheck(context.Context, *CheckingRequest) (*CheckingResponse, error) {
+func (UnimplementedStreamerServiceServer) SubscriptionCheck(context.Context, *Verification) (*CheckingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubscriptionCheck not implemented")
 }
 func (UnimplementedStreamerServiceServer) mustEmbedUnimplementedStreamerServiceServer() {}
@@ -223,7 +223,7 @@ func _StreamerService_SubscriptionSet_Handler(srv interface{}, ctx context.Conte
 }
 
 func _StreamerService_SubscriptionCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckingRequest)
+	in := new(Verification)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -235,7 +235,7 @@ func _StreamerService_SubscriptionCheck_Handler(srv interface{}, ctx context.Con
 		FullMethod: StreamerService_SubscriptionCheck_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StreamerServiceServer).SubscriptionCheck(ctx, req.(*CheckingRequest))
+		return srv.(StreamerServiceServer).SubscriptionCheck(ctx, req.(*Verification))
 	}
 	return interceptor(ctx, in, info, handler)
 }
