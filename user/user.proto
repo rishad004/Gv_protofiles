@@ -68,7 +68,8 @@ message EditResponse{
 }
 
 message SubscribeRequest {
-    int32 id = 1;
+    int32 userid = 1;
+    int32 id = 2;
 }
 
 message SubscribeResponse {
