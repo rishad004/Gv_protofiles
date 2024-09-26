@@ -17,6 +17,7 @@ message PaymentInitRequest {
 message PaymentInitResponse {
     int32 id = 1;
     string paymentid = 2;
+    int32 sid = 3;
 }
 
 message PaymentVerifyRequest {
