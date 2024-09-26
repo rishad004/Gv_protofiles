@@ -25,6 +25,7 @@ const (
 	UserService_Profile_FullMethodName           = "/user.UserService/Profile"
 	UserService_ProfileEditing_FullMethodName    = "/user.UserService/ProfileEditing"
 	UserService_Subscribing_FullMethodName       = "/user.UserService/Subscribing"
+	UserService_Subscribed_FullMethodName        = "/user.UserService/Subscribed"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -37,6 +38,7 @@ type UserServiceClient interface {
 	Profile(ctx context.Context, in *Verification, opts ...grpc.CallOption) (*ProfileResponse, error)
 	ProfileEditing(ctx context.Context, in *EditRequest, opts ...grpc.CallOption) (*EditResponse, error)
 	Subscribing(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*SubscribeResponse, error)
+	Subscribed(ctx context.Context, in *SubscribedRequest, opts ...grpc.CallOption) (*VerificationResponse, error)
 }
 
 type userServiceClient struct {
@@ -107,6 +109,16 @@ func (c *userServiceClient) Subscribing(ctx context.Context, in *SubscribeReques
 	return out, nil
 }
 
+func (c *userServiceClient) Subscribed(ctx context.Context, in *SubscribedRequest, opts ...grpc.CallOption) (*VerificationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(VerificationResponse)
+	err := c.cc.Invoke(ctx, UserService_Subscribed_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -117,6 +129,7 @@ type UserServiceServer interface {
 	Profile(context.Context, *Verification) (*ProfileResponse, error)
 	ProfileEditing(context.Context, *EditRequest) (*EditResponse, error)
 	Subscribing(context.Context, *SubscribeRequest) (*SubscribeResponse, error)
+	Subscribed(context.Context, *SubscribedRequest) (*VerificationResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -144,6 +157,9 @@ func (UnimplementedUserServiceServer) ProfileEditing(context.Context, *EditReque
 }
 func (UnimplementedUserServiceServer) Subscribing(context.Context, *SubscribeRequest) (*SubscribeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Subscribing not implemented")
+}
+func (UnimplementedUserServiceServer) Subscribed(context.Context, *SubscribedRequest) (*VerificationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Subscribed not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -274,6 +290,24 @@ func _UserService_Subscribing_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_Subscribed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubscribedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).Subscribed(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_Subscribed_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).Subscribed(ctx, req.(*SubscribedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -304,6 +338,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Subscribing",
 			Handler:    _UserService_Subscribing_Handler,
+		},
+		{
+			MethodName: "Subscribed",
+			Handler:    _UserService_Subscribed_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

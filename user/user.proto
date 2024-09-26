@@ -11,6 +11,7 @@ service UserService {
     rpc Profile(Verification) returns (ProfileResponse);
     rpc ProfileEditing(EditRequest) returns (EditResponse);
     rpc Subscribing(SubscribeRequest) returns (SubscribeResponse);
+    rpc Subscribed(SubscribedRequest) returns (VerificationResponse);
 }
 
 message SignUpRequest {
@@ -75,4 +76,9 @@ message SubscribeRequest {
 message SubscribeResponse {
     string paymentid = 1;
     string message = 2;
+}
+
+message SubscribedRequest {
+    int32 id = 1;
+    string paymentid = 2;
 }
