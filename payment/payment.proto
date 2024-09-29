@@ -20,9 +20,10 @@ message PaymentInitResponse {
 }
 
 message PaymentVerifyRequest {
-    string signature = 1;
-    string orderid = 2;
-    string paymentid = 3;
+    int32 id = 1;
+    string signature = 2;
+    string orderid = 3;
+    string paymentid = 4;
 }
 
 message PaymentVerifyResponse {
