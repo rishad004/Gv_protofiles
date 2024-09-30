@@ -10,6 +10,7 @@ service StreamerService {
     rpc EditChannel(EditRequest) returns (EditResponse);
     rpc SubscriptionSet(SubscriptionRequest) returns (SubscriptionResponse);
     rpc SubscriptionCheck(Verification) returns (CheckingResponse);
+    rpc SubscriptionList(Empty) returns (ListResponse);
 }
 
 message RegistrationRequest {
@@ -54,4 +55,16 @@ message SubscriptionResponse {
 
 message CheckingResponse {
     int32 amount = 1;
+}
+
+message Empty {}
+
+message SubscriptionList {
+    int32 streamerid = 1;
+    string channel = 2;
+    int32 subscriptionid = 3;
+}
+
+message ListResponse {
+    repeated SubscriptionList list = 1;
 }

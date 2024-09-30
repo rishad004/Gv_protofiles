@@ -24,6 +24,7 @@ const (
 	StreamerService_EditChannel_FullMethodName       = "/streamer.StreamerService/EditChannel"
 	StreamerService_SubscriptionSet_FullMethodName   = "/streamer.StreamerService/SubscriptionSet"
 	StreamerService_SubscriptionCheck_FullMethodName = "/streamer.StreamerService/SubscriptionCheck"
+	StreamerService_SubscriptionList_FullMethodName  = "/streamer.StreamerService/SubscriptionList"
 )
 
 // StreamerServiceClient is the client API for StreamerService service.
@@ -35,6 +36,7 @@ type StreamerServiceClient interface {
 	EditChannel(ctx context.Context, in *EditRequest, opts ...grpc.CallOption) (*EditResponse, error)
 	SubscriptionSet(ctx context.Context, in *SubscriptionRequest, opts ...grpc.CallOption) (*SubscriptionResponse, error)
 	SubscriptionCheck(ctx context.Context, in *Verification, opts ...grpc.CallOption) (*CheckingResponse, error)
+	SubscriptionList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ListResponse, error)
 }
 
 type streamerServiceClient struct {
@@ -95,6 +97,16 @@ func (c *streamerServiceClient) SubscriptionCheck(ctx context.Context, in *Verif
 	return out, nil
 }
 
+func (c *streamerServiceClient) SubscriptionList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListResponse)
+	err := c.cc.Invoke(ctx, StreamerService_SubscriptionList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StreamerServiceServer is the server API for StreamerService service.
 // All implementations must embed UnimplementedStreamerServiceServer
 // for forward compatibility.
@@ -104,6 +116,7 @@ type StreamerServiceServer interface {
 	EditChannel(context.Context, *EditRequest) (*EditResponse, error)
 	SubscriptionSet(context.Context, *SubscriptionRequest) (*SubscriptionResponse, error)
 	SubscriptionCheck(context.Context, *Verification) (*CheckingResponse, error)
+	SubscriptionList(context.Context, *Empty) (*ListResponse, error)
 	mustEmbedUnimplementedStreamerServiceServer()
 }
 
@@ -128,6 +141,9 @@ func (UnimplementedStreamerServiceServer) SubscriptionSet(context.Context, *Subs
 }
 func (UnimplementedStreamerServiceServer) SubscriptionCheck(context.Context, *Verification) (*CheckingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SubscriptionCheck not implemented")
+}
+func (UnimplementedStreamerServiceServer) SubscriptionList(context.Context, *Empty) (*ListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubscriptionList not implemented")
 }
 func (UnimplementedStreamerServiceServer) mustEmbedUnimplementedStreamerServiceServer() {}
 func (UnimplementedStreamerServiceServer) testEmbeddedByValue()                         {}
@@ -240,6 +256,24 @@ func _StreamerService_SubscriptionCheck_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StreamerService_SubscriptionList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StreamerServiceServer).SubscriptionList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StreamerService_SubscriptionList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StreamerServiceServer).SubscriptionList(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // StreamerService_ServiceDesc is the grpc.ServiceDesc for StreamerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,6 +300,10 @@ var StreamerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SubscriptionCheck",
 			Handler:    _StreamerService_SubscriptionCheck_Handler,
+		},
+		{
+			MethodName: "SubscriptionList",
+			Handler:    _StreamerService_SubscriptionList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
