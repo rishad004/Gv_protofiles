@@ -72,9 +72,9 @@ message ListResponse {
 }
 
 message StreamKeyRequest {
-    string streamkey = 1;
+    string channel = 1;
 }
 
 message StreamKeyResponse {
-    string channel = 1;
+    string streamkey = 1;
 }
