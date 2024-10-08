@@ -11,6 +11,7 @@ service StreamerService {
     rpc SubscriptionSet(SubscriptionRequest) returns (SubscriptionResponse);
     rpc SubscriptionCheck(Verification) returns (CheckingResponse);
     rpc SubscriptionList(Empty) returns (ListResponse);
+    rpc FindByStreamKey(StreamKeyRequest) returns (StreamKeyResponse);
 }
 
 message RegistrationRequest {
@@ -68,4 +69,12 @@ message SubscriptionList {
 
 message ListResponse {
     repeated SubscriptionList list = 1;
+}
+
+message StreamKeyRequest {
+    string streamkey = 1;
+}
+
+message StreamKeyResponse {
+    string channel = 1;
 }
