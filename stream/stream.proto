@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package stream;
+
+option go_package = "github.com/rishad004/project-gv/stream-service";
+
+service StreamService {
+    rpc StartStream(Stream) returns (Empty);
+    rpc EndStream(Stream) returns (Empty);
+}
+
+message Empty {}
+
+message Stream {
+    int32 StreamerId = 1;
+}
