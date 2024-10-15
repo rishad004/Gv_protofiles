@@ -26,6 +26,8 @@ const (
 	StreamerService_SubscriptionCheck_FullMethodName = "/streamer.StreamerService/SubscriptionCheck"
 	StreamerService_SubscriptionList_FullMethodName  = "/streamer.StreamerService/SubscriptionList"
 	StreamerService_FindByStreamKey_FullMethodName   = "/streamer.StreamerService/FindByStreamKey"
+	StreamerService_StreamStart_FullMethodName       = "/streamer.StreamerService/StreamStart"
+	StreamerService_StreamEnd_FullMethodName         = "/streamer.StreamerService/StreamEnd"
 )
 
 // StreamerServiceClient is the client API for StreamerService service.
@@ -39,6 +41,8 @@ type StreamerServiceClient interface {
 	SubscriptionCheck(ctx context.Context, in *Verification, opts ...grpc.CallOption) (*CheckingResponse, error)
 	SubscriptionList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ListResponse, error)
 	FindByStreamKey(ctx context.Context, in *StreamKeyRequest, opts ...grpc.CallOption) (*StreamKeyResponse, error)
+	StreamStart(ctx context.Context, in *StreamKeyResponse, opts ...grpc.CallOption) (*Empty, error)
+	StreamEnd(ctx context.Context, in *StreamKeyResponse, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type streamerServiceClient struct {
@@ -119,6 +123,26 @@ func (c *streamerServiceClient) FindByStreamKey(ctx context.Context, in *StreamK
 	return out, nil
 }
 
+func (c *streamerServiceClient) StreamStart(ctx context.Context, in *StreamKeyResponse, opts ...grpc.CallOption) (*Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, StreamerService_StreamStart_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *streamerServiceClient) StreamEnd(ctx context.Context, in *StreamKeyResponse, opts ...grpc.CallOption) (*Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, StreamerService_StreamEnd_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StreamerServiceServer is the server API for StreamerService service.
 // All implementations must embed UnimplementedStreamerServiceServer
 // for forward compatibility.
@@ -130,6 +154,8 @@ type StreamerServiceServer interface {
 	SubscriptionCheck(context.Context, *Verification) (*CheckingResponse, error)
 	SubscriptionList(context.Context, *Empty) (*ListResponse, error)
 	FindByStreamKey(context.Context, *StreamKeyRequest) (*StreamKeyResponse, error)
+	StreamStart(context.Context, *StreamKeyResponse) (*Empty, error)
+	StreamEnd(context.Context, *StreamKeyResponse) (*Empty, error)
 	mustEmbedUnimplementedStreamerServiceServer()
 }
 
@@ -160,6 +186,12 @@ func (UnimplementedStreamerServiceServer) SubscriptionList(context.Context, *Emp
 }
 func (UnimplementedStreamerServiceServer) FindByStreamKey(context.Context, *StreamKeyRequest) (*StreamKeyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindByStreamKey not implemented")
+}
+func (UnimplementedStreamerServiceServer) StreamStart(context.Context, *StreamKeyResponse) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StreamStart not implemented")
+}
+func (UnimplementedStreamerServiceServer) StreamEnd(context.Context, *StreamKeyResponse) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StreamEnd not implemented")
 }
 func (UnimplementedStreamerServiceServer) mustEmbedUnimplementedStreamerServiceServer() {}
 func (UnimplementedStreamerServiceServer) testEmbeddedByValue()                         {}
@@ -308,6 +340,42 @@ func _StreamerService_FindByStreamKey_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StreamerService_StreamStart_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StreamKeyResponse)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StreamerServiceServer).StreamStart(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StreamerService_StreamStart_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StreamerServiceServer).StreamStart(ctx, req.(*StreamKeyResponse))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StreamerService_StreamEnd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StreamKeyResponse)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StreamerServiceServer).StreamEnd(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StreamerService_StreamEnd_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StreamerServiceServer).StreamEnd(ctx, req.(*StreamKeyResponse))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // StreamerService_ServiceDesc is the grpc.ServiceDesc for StreamerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -342,6 +410,14 @@ var StreamerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FindByStreamKey",
 			Handler:    _StreamerService_FindByStreamKey_Handler,
+		},
+		{
+			MethodName: "StreamStart",
+			Handler:    _StreamerService_StreamStart_Handler,
+		},
+		{
+			MethodName: "StreamEnd",
+			Handler:    _StreamerService_StreamEnd_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

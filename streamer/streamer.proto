@@ -12,6 +12,8 @@ service StreamerService {
     rpc SubscriptionCheck(Verification) returns (CheckingResponse);
     rpc SubscriptionList(Empty) returns (ListResponse);
     rpc FindByStreamKey(StreamKeyRequest) returns (StreamKeyResponse);
+    rpc StreamStart(StreamKeyResponse) returns (Empty);
+    rpc StreamEnd(StreamKeyResponse) returns (Empty);
 }
 
 message RegistrationRequest {
