@@ -75,10 +75,10 @@ message ListResponse {
 }
 
 message StreamKeyRequest {
-    int32 id = 1;
     string channel = 2;
 }
 
 message StreamKeyResponse {
-    string streamkey = 1;
+    int32 id = 1;
+    string streamkey = 2;
 }
