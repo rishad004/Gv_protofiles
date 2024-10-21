@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	StreamService_StartStream_FullMethodName = "/stream.StreamService/StartStream"
-	StreamService_EndStream_FullMethodName   = "/stream.StreamService/EndStream"
+	StreamService_StartStream_FullMethodName     = "/stream.StreamService/StartStream"
+	StreamService_EndStream_FullMethodName       = "/stream.StreamService/EndStream"
+	StreamService_StreamDetailing_FullMethodName = "/stream.StreamService/StreamDetailing"
 )
 
 // StreamServiceClient is the client API for StreamService service.
@@ -29,6 +30,7 @@ const (
 type StreamServiceClient interface {
 	StartStream(ctx context.Context, in *Stream, opts ...grpc.CallOption) (*Empty, error)
 	EndStream(ctx context.Context, in *Stream, opts ...grpc.CallOption) (*Empty, error)
+	StreamDetailing(ctx context.Context, in *Create, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type streamServiceClient struct {
@@ -59,12 +61,23 @@ func (c *streamServiceClient) EndStream(ctx context.Context, in *Stream, opts ..
 	return out, nil
 }
 
+func (c *streamServiceClient) StreamDetailing(ctx context.Context, in *Create, opts ...grpc.CallOption) (*Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, StreamService_StreamDetailing_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StreamServiceServer is the server API for StreamService service.
 // All implementations must embed UnimplementedStreamServiceServer
 // for forward compatibility.
 type StreamServiceServer interface {
 	StartStream(context.Context, *Stream) (*Empty, error)
 	EndStream(context.Context, *Stream) (*Empty, error)
+	StreamDetailing(context.Context, *Create) (*Empty, error)
 	mustEmbedUnimplementedStreamServiceServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedStreamServiceServer) StartStream(context.Context, *Stream) (*
 }
 func (UnimplementedStreamServiceServer) EndStream(context.Context, *Stream) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EndStream not implemented")
+}
+func (UnimplementedStreamServiceServer) StreamDetailing(context.Context, *Create) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StreamDetailing not implemented")
 }
 func (UnimplementedStreamServiceServer) mustEmbedUnimplementedStreamServiceServer() {}
 func (UnimplementedStreamServiceServer) testEmbeddedByValue()                       {}
@@ -138,6 +154,24 @@ func _StreamService_EndStream_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StreamService_StreamDetailing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Create)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StreamServiceServer).StreamDetailing(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StreamService_StreamDetailing_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StreamServiceServer).StreamDetailing(ctx, req.(*Create))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // StreamService_ServiceDesc is the grpc.ServiceDesc for StreamService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +186,10 @@ var StreamService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EndStream",
 			Handler:    _StreamService_EndStream_Handler,
+		},
+		{
+			MethodName: "StreamDetailing",
+			Handler:    _StreamService_StreamDetailing_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
