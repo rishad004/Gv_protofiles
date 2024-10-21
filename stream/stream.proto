@@ -7,7 +7,8 @@ option go_package = "github.com/rishad004/project-gv/stream-service";
 service StreamService {
     rpc StartStream(Stream) returns (Empty);
     rpc EndStream(Stream) returns (Empty);
-    rpc StreamDetailing(Create) returns (Empty);
+    rpc StreamDetailing(Data) returns (Empty);
+    rpc StreamDetails(Stream) returns (Data);
 }
 
 message Empty {}
@@ -16,8 +17,8 @@ message Stream {
     int32 StreamerId = 1;
 }
 
-message Create {
-    int32 userid = 1;
+message Data {
+    int32 id = 1;
     string title = 2;
     string description = 3;
 }

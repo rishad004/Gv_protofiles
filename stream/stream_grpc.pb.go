@@ -22,6 +22,7 @@ const (
 	StreamService_StartStream_FullMethodName     = "/stream.StreamService/StartStream"
 	StreamService_EndStream_FullMethodName       = "/stream.StreamService/EndStream"
 	StreamService_StreamDetailing_FullMethodName = "/stream.StreamService/StreamDetailing"
+	StreamService_StreamDetails_FullMethodName   = "/stream.StreamService/StreamDetails"
 )
 
 // StreamServiceClient is the client API for StreamService service.
@@ -30,7 +31,8 @@ const (
 type StreamServiceClient interface {
 	StartStream(ctx context.Context, in *Stream, opts ...grpc.CallOption) (*Empty, error)
 	EndStream(ctx context.Context, in *Stream, opts ...grpc.CallOption) (*Empty, error)
-	StreamDetailing(ctx context.Context, in *Create, opts ...grpc.CallOption) (*Empty, error)
+	StreamDetailing(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Empty, error)
+	StreamDetails(ctx context.Context, in *Stream, opts ...grpc.CallOption) (*Data, error)
 }
 
 type streamServiceClient struct {
@@ -61,10 +63,20 @@ func (c *streamServiceClient) EndStream(ctx context.Context, in *Stream, opts ..
 	return out, nil
 }
 
-func (c *streamServiceClient) StreamDetailing(ctx context.Context, in *Create, opts ...grpc.CallOption) (*Empty, error) {
+func (c *streamServiceClient) StreamDetailing(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Empty)
 	err := c.cc.Invoke(ctx, StreamService_StreamDetailing_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *streamServiceClient) StreamDetails(ctx context.Context, in *Stream, opts ...grpc.CallOption) (*Data, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Data)
+	err := c.cc.Invoke(ctx, StreamService_StreamDetails_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +89,8 @@ func (c *streamServiceClient) StreamDetailing(ctx context.Context, in *Create, o
 type StreamServiceServer interface {
 	StartStream(context.Context, *Stream) (*Empty, error)
 	EndStream(context.Context, *Stream) (*Empty, error)
-	StreamDetailing(context.Context, *Create) (*Empty, error)
+	StreamDetailing(context.Context, *Data) (*Empty, error)
+	StreamDetails(context.Context, *Stream) (*Data, error)
 	mustEmbedUnimplementedStreamServiceServer()
 }
 
@@ -94,8 +107,11 @@ func (UnimplementedStreamServiceServer) StartStream(context.Context, *Stream) (*
 func (UnimplementedStreamServiceServer) EndStream(context.Context, *Stream) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EndStream not implemented")
 }
-func (UnimplementedStreamServiceServer) StreamDetailing(context.Context, *Create) (*Empty, error) {
+func (UnimplementedStreamServiceServer) StreamDetailing(context.Context, *Data) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StreamDetailing not implemented")
+}
+func (UnimplementedStreamServiceServer) StreamDetails(context.Context, *Stream) (*Data, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StreamDetails not implemented")
 }
 func (UnimplementedStreamServiceServer) mustEmbedUnimplementedStreamServiceServer() {}
 func (UnimplementedStreamServiceServer) testEmbeddedByValue()                       {}
@@ -155,7 +171,7 @@ func _StreamService_EndStream_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _StreamService_StreamDetailing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Create)
+	in := new(Data)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -167,7 +183,25 @@ func _StreamService_StreamDetailing_Handler(srv interface{}, ctx context.Context
 		FullMethod: StreamService_StreamDetailing_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StreamServiceServer).StreamDetailing(ctx, req.(*Create))
+		return srv.(StreamServiceServer).StreamDetailing(ctx, req.(*Data))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StreamService_StreamDetails_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Stream)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StreamServiceServer).StreamDetails(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StreamService_StreamDetails_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StreamServiceServer).StreamDetails(ctx, req.(*Stream))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -190,6 +224,10 @@ var StreamService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "StreamDetailing",
 			Handler:    _StreamService_StreamDetailing_Handler,
+		},
+		{
+			MethodName: "StreamDetails",
+			Handler:    _StreamService_StreamDetails_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
