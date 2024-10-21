@@ -82,4 +82,6 @@ message StreamKeyRequest {
 message StreamKeyResponse {
     int32 id = 1;
     string streamkey = 2;
+    string title = 3;
+    string description = 4;
 }
