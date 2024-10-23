@@ -14,6 +14,7 @@ service StreamerService {
     rpc FindByStreamKey(StreamKeyRequest) returns (StreamKeyResponse);
     rpc StreamStart(StreamKeyResponse) returns (Empty);
     rpc StreamEnd(StreamKeyResponse) returns (Empty);
+    rpc GettingFollowed(Verification) return (Empty);
 }
 
 message RegistrationRequest {
