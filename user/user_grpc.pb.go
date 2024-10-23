@@ -40,7 +40,7 @@ type UserServiceClient interface {
 	ProfileEditing(ctx context.Context, in *EditRequest, opts ...grpc.CallOption) (*EditResponse, error)
 	Subscribing(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*SubscribeResponse, error)
 	Subscribed(ctx context.Context, in *SubscribedRequest, opts ...grpc.CallOption) (*VerificationResponse, error)
-	Following(ctx context.Context, in *SubscribedRequest, opts ...grpc.CallOption) (*Empty, error)
+	Following(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type userServiceClient struct {
@@ -121,7 +121,7 @@ func (c *userServiceClient) Subscribed(ctx context.Context, in *SubscribedReques
 	return out, nil
 }
 
-func (c *userServiceClient) Following(ctx context.Context, in *SubscribedRequest, opts ...grpc.CallOption) (*Empty, error) {
+func (c *userServiceClient) Following(ctx context.Context, in *SubscribeRequest, opts ...grpc.CallOption) (*Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Empty)
 	err := c.cc.Invoke(ctx, UserService_Following_FullMethodName, in, out, cOpts...)
@@ -142,7 +142,7 @@ type UserServiceServer interface {
 	ProfileEditing(context.Context, *EditRequest) (*EditResponse, error)
 	Subscribing(context.Context, *SubscribeRequest) (*SubscribeResponse, error)
 	Subscribed(context.Context, *SubscribedRequest) (*VerificationResponse, error)
-	Following(context.Context, *SubscribedRequest) (*Empty, error)
+	Following(context.Context, *SubscribeRequest) (*Empty, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -174,7 +174,7 @@ func (UnimplementedUserServiceServer) Subscribing(context.Context, *SubscribeReq
 func (UnimplementedUserServiceServer) Subscribed(context.Context, *SubscribedRequest) (*VerificationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Subscribed not implemented")
 }
-func (UnimplementedUserServiceServer) Following(context.Context, *SubscribedRequest) (*Empty, error) {
+func (UnimplementedUserServiceServer) Following(context.Context, *SubscribeRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Following not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
@@ -325,7 +325,7 @@ func _UserService_Subscribed_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _UserService_Following_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SubscribedRequest)
+	in := new(SubscribeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -337,7 +337,7 @@ func _UserService_Following_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: UserService_Following_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Following(ctx, req.(*SubscribedRequest))
+		return srv.(UserServiceServer).Following(ctx, req.(*SubscribeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

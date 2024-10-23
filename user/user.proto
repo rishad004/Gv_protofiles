@@ -12,7 +12,7 @@ service UserService {
     rpc ProfileEditing(EditRequest) returns (EditResponse);
     rpc Subscribing(SubscribeRequest) returns (SubscribeResponse);
     rpc Subscribed(SubscribedRequest) returns (VerificationResponse);
-    rpc Following(SubscribedRequest) returns (Empty);
+    rpc Following(SubscribeRequest) returns (Empty);
 }
 
 message SignUpRequest {
