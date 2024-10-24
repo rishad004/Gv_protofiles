@@ -28,6 +28,7 @@ const (
 	StreamerService_FindByStreamKey_FullMethodName   = "/streamer.StreamerService/FindByStreamKey"
 	StreamerService_StreamStart_FullMethodName       = "/streamer.StreamerService/StreamStart"
 	StreamerService_StreamEnd_FullMethodName         = "/streamer.StreamerService/StreamEnd"
+	StreamerService_GettingFollowed_FullMethodName   = "/streamer.StreamerService/GettingFollowed"
 )
 
 // StreamerServiceClient is the client API for StreamerService service.
@@ -43,6 +44,7 @@ type StreamerServiceClient interface {
 	FindByStreamKey(ctx context.Context, in *StreamKeyRequest, opts ...grpc.CallOption) (*StreamKeyResponse, error)
 	StreamStart(ctx context.Context, in *StreamKeyResponse, opts ...grpc.CallOption) (*Empty, error)
 	StreamEnd(ctx context.Context, in *StreamKeyResponse, opts ...grpc.CallOption) (*Empty, error)
+	GettingFollowed(ctx context.Context, in *Verification, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type streamerServiceClient struct {
@@ -143,6 +145,16 @@ func (c *streamerServiceClient) StreamEnd(ctx context.Context, in *StreamKeyResp
 	return out, nil
 }
 
+func (c *streamerServiceClient) GettingFollowed(ctx context.Context, in *Verification, opts ...grpc.CallOption) (*Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, StreamerService_GettingFollowed_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StreamerServiceServer is the server API for StreamerService service.
 // All implementations must embed UnimplementedStreamerServiceServer
 // for forward compatibility.
@@ -156,6 +168,7 @@ type StreamerServiceServer interface {
 	FindByStreamKey(context.Context, *StreamKeyRequest) (*StreamKeyResponse, error)
 	StreamStart(context.Context, *StreamKeyResponse) (*Empty, error)
 	StreamEnd(context.Context, *StreamKeyResponse) (*Empty, error)
+	GettingFollowed(context.Context, *Verification) (*Empty, error)
 	mustEmbedUnimplementedStreamerServiceServer()
 }
 
@@ -192,6 +205,9 @@ func (UnimplementedStreamerServiceServer) StreamStart(context.Context, *StreamKe
 }
 func (UnimplementedStreamerServiceServer) StreamEnd(context.Context, *StreamKeyResponse) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StreamEnd not implemented")
+}
+func (UnimplementedStreamerServiceServer) GettingFollowed(context.Context, *Verification) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GettingFollowed not implemented")
 }
 func (UnimplementedStreamerServiceServer) mustEmbedUnimplementedStreamerServiceServer() {}
 func (UnimplementedStreamerServiceServer) testEmbeddedByValue()                         {}
@@ -376,6 +392,24 @@ func _StreamerService_StreamEnd_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StreamerService_GettingFollowed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Verification)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StreamerServiceServer).GettingFollowed(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StreamerService_GettingFollowed_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StreamerServiceServer).GettingFollowed(ctx, req.(*Verification))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // StreamerService_ServiceDesc is the grpc.ServiceDesc for StreamerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -418,6 +452,10 @@ var StreamerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "StreamEnd",
 			Handler:    _StreamerService_StreamEnd_Handler,
+		},
+		{
+			MethodName: "GettingFollowed",
+			Handler:    _StreamerService_GettingFollowed_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
