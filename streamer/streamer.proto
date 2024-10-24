@@ -70,6 +70,7 @@ message SubscriptionList {
     int32 streamerid = 1;
     string channel = 2;
     int32 subscriptionid = 3;
+    string amount = 4;
 }
 
 message ListResponse {
