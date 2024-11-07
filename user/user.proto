@@ -13,6 +13,14 @@ service UserService {
     rpc Subscribing(SubscribeRequest) returns (SubscribeResponse);
     rpc Subscribed(SubscribedRequest) returns (VerificationResponse);
     rpc Following(SubscribeRequest) returns (Empty);
+    rpc WalletAdd(Amount) returns (SubscribeResponse);
+    rpc WalletAdded(SubscribedRequest) returns (Empty);
+    rpc SuperChat(Amount) returns (Empty);
+}
+
+message Amount {
+    int32 userid = 1;
+    int32 amount = 2;
 }
 
 message SignUpRequest {
