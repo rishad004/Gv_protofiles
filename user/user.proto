@@ -16,6 +16,7 @@ service UserService {
     rpc WalletAdd(Amount) returns (SubscribeResponse);
     rpc WalletAdded(SubscribedRequest) returns (Empty);
     rpc SuperChat(Amount) returns (Empty);
+    rpc WalletShow(Verification) returns(Verification);
 }
 
 message Amount {

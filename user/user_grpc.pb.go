@@ -30,6 +30,7 @@ const (
 	UserService_WalletAdd_FullMethodName         = "/user.UserService/WalletAdd"
 	UserService_WalletAdded_FullMethodName       = "/user.UserService/WalletAdded"
 	UserService_SuperChat_FullMethodName         = "/user.UserService/SuperChat"
+	UserService_WalletShow_FullMethodName        = "/user.UserService/WalletShow"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -47,6 +48,7 @@ type UserServiceClient interface {
 	WalletAdd(ctx context.Context, in *Amount, opts ...grpc.CallOption) (*SubscribeResponse, error)
 	WalletAdded(ctx context.Context, in *SubscribedRequest, opts ...grpc.CallOption) (*Empty, error)
 	SuperChat(ctx context.Context, in *Amount, opts ...grpc.CallOption) (*Empty, error)
+	WalletShow(ctx context.Context, in *Verification, opts ...grpc.CallOption) (*Verification, error)
 }
 
 type userServiceClient struct {
@@ -167,6 +169,16 @@ func (c *userServiceClient) SuperChat(ctx context.Context, in *Amount, opts ...g
 	return out, nil
 }
 
+func (c *userServiceClient) WalletShow(ctx context.Context, in *Verification, opts ...grpc.CallOption) (*Verification, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Verification)
+	err := c.cc.Invoke(ctx, UserService_WalletShow_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -182,6 +194,7 @@ type UserServiceServer interface {
 	WalletAdd(context.Context, *Amount) (*SubscribeResponse, error)
 	WalletAdded(context.Context, *SubscribedRequest) (*Empty, error)
 	SuperChat(context.Context, *Amount) (*Empty, error)
+	WalletShow(context.Context, *Verification) (*Verification, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -224,6 +237,9 @@ func (UnimplementedUserServiceServer) WalletAdded(context.Context, *SubscribedRe
 }
 func (UnimplementedUserServiceServer) SuperChat(context.Context, *Amount) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SuperChat not implemented")
+}
+func (UnimplementedUserServiceServer) WalletShow(context.Context, *Verification) (*Verification, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WalletShow not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -444,6 +460,24 @@ func _UserService_SuperChat_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_WalletShow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Verification)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).WalletShow(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_WalletShow_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).WalletShow(ctx, req.(*Verification))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -494,6 +528,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SuperChat",
 			Handler:    _UserService_SuperChat_Handler,
+		},
+		{
+			MethodName: "WalletShow",
+			Handler:    _UserService_WalletShow_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
